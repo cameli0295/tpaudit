@@ -1,0 +1,477 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R 5 0 R 7 0 R 9 0 R] /Count 4 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 3298 >>
+stream
+BT
+/F1 10 Tf
+54 720 Td
+(# TP3 - Audit, cartographie et traitement des données avec SQL) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Page de titre) Tj
+0 -12 Td
+(- **Nom et prénom \(du binôme\)** : [À compléter]) Tj
+0 -12 Td
+(- **Titre du TP** : TP3 - Audit, cartographie et traitement des données avec SQL) Tj
+0 -12 Td
+(- **Date de réalisation** : 2024-02-08) Tj
+0 -12 Td
+(- **Enseignant / cours** : [À compléter]) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Description du travail réalisé) Tj
+0 -12 Td
+(Le travail consiste à construire un mini-pipeline ETL multi-sources pour nettoyer, normaliser,) Tj
+0 -12 Td
+(fusionner et préparer des données issues de quatre fichiers CSV \(`source_ventes.csv`,) Tj
+0 -12 Td
+(`source_produits.csv`, `source_commandes.csv`, `source_articles.csv`\). Les étapes principales) Tj
+0 -12 Td
+(sont :) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(1. **Extraction** : création des tables de staging et importation des fichiers CSV.) Tj
+0 -12 Td
+(2. **Transformation** : nettoyage des valeurs invalides \(dates, prix négatifs, stocks nuls\),) Tj
+0 -12 Td
+(harmonisation des formats, suppression des doublons et uniformisation des chaînes.) Tj
+0 -12 Td
+(3. **Fusion et enrichissement** : fusion des produits/articles vers une dimension unique et) Tj
+0 -12 Td
+(enrichissement des ventes avec des champs calculés.) Tj
+0 -12 Td
+(4. **Chargement** : création des tables finales pour l’analyse \(`ventes_analyse`,) Tj
+0 -12 Td
+(`commandes_analyse`, `dim_produits`\).) Tj
+0 -12 Td
+(5. **Journalisation** : traçabilité des chargements via une table de logs.) Tj
+0 -12 Td
+(6. **Optimisation** : indexation et partitionnement.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(**Contexte des données**) Tj
+0 -12 Td
+(- `source_ventes.csv` : ventes quotidiennes \(ID_VENTE, DATE_VENTE, ID_PRODUIT, CLIENT,) Tj
+0 -12 Td
+(QUANTITE, PRIX_UNITAIRE, VILLE\).) Tj
+0 -12 Td
+(- `source_produits.csv` : catalogue produits \(ID_PRODUIT, NOM_PRODUIT, CATEGORIE,) Tj
+0 -12 Td
+(PRIX_CATALOGUE, STOCK\).) Tj
+0 -12 Td
+(- `source_commandes.csv` : commandes clients \(ID_COMMANDE, DATE_COMMANDE, ID_ARTICLE, CLIENT,) Tj
+0 -12 Td
+(QUANTITE, PRIX_UNITAIRE, VILLE, MODE_PAIEMENT, CODE_POSTAL, ETAT_COMMANDE\).) Tj
+0 -12 Td
+(- `source_articles.csv` : articles associés \(ID_ARTICLE, NOM_ARTICLE, CATEGORIE,) Tj
+0 -12 Td
+(PRIX_CATALOGUE, STOCK, FOURNISSEUR, DATE_AJOUT, ACTIF, TAUX_TVA\).) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Requêtes effectuées \(avec commentaires\)) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(> Les requêtes ci-dessous peuvent être exécutées dans MySQL. Chaque requête est accompagnée) Tj
+0 -12 Td
+(d’une explication.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(### 1\) Création des tables de staging) Tj
+0 -12 Td
+(CREATE TABLE staging_ventes \() Tj
+0 -12 Td
+(  ID_VENTE INT,) Tj
+0 -12 Td
+(  DATE_VENTE VARCHAR\(20\),) Tj
+0 -12 Td
+(  ID_PRODUIT VARCHAR\(10\),) Tj
+0 -12 Td
+(  CLIENT VARCHAR\(100\),) Tj
+0 -12 Td
+(  QUANTITE INT,) Tj
+0 -12 Td
+(  PRIX_UNITAIRE VARCHAR\(20\),) Tj
+0 -12 Td
+(  VILLE VARCHAR\(100\)) Tj
+0 -12 Td
+(\);) Tj
+0 -12 Td
+(- **Fonction** : stocker les ventes brutes sans contrainte stricte de type.) Tj
+0 -12 Td
+(- **Raison** : éviter les erreurs d’import liées aux formats invalides.) Tj
+0 -12 Td
+(- **Résultat attendu** : table prête pour le nettoyage.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(CREATE TABLE staging_produits \() Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> >> >> /Contents 6 0 R >>
+endobj
+6 0 obj
+<< /Length 2431 >>
+stream
+BT
+/F1 10 Tf
+54 720 Td
+(  ID_PRODUIT VARCHAR\(10\),) Tj
+0 -12 Td
+(  NOM_PRODUIT VARCHAR\(200\),) Tj
+0 -12 Td
+(  CATEGORIE VARCHAR\(100\),) Tj
+0 -12 Td
+(  PRIX_CATALOGUE VARCHAR\(20\),) Tj
+0 -12 Td
+(  STOCK VARCHAR\(20\)) Tj
+0 -12 Td
+(\);) Tj
+0 -12 Td
+(- **Fonction** : accueillir le catalogue brut.) Tj
+0 -12 Td
+(- **Raison** : isoler les erreurs \(NaN, None, prix négatifs\).) Tj
+0 -12 Td
+(- **Résultat attendu** : table staging complète.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(CREATE TABLE staging_commandes \() Tj
+0 -12 Td
+(  ID_COMMANDE VARCHAR\(10\),) Tj
+0 -12 Td
+(  DATE_COMMANDE VARCHAR\(20\),) Tj
+0 -12 Td
+(  ID_ARTICLE VARCHAR\(10\),) Tj
+0 -12 Td
+(  CLIENT VARCHAR\(100\),) Tj
+0 -12 Td
+(  QUANTITE INT,) Tj
+0 -12 Td
+(  PRIX_UNITAIRE VARCHAR\(20\),) Tj
+0 -12 Td
+(  VILLE VARCHAR\(100\),) Tj
+0 -12 Td
+(  MODE_PAIEMENT VARCHAR\(50\),) Tj
+0 -12 Td
+(  CODE_POSTAL VARCHAR\(10\),) Tj
+0 -12 Td
+(  ETAT_COMMANDE VARCHAR\(50\)) Tj
+0 -12 Td
+(\);) Tj
+0 -12 Td
+(- **Fonction** : stocker les commandes brutes.) Tj
+0 -12 Td
+(- **Raison** : permettre un nettoyage progressif.) Tj
+0 -12 Td
+(- **Résultat attendu** : table staging prête au traitement.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(CREATE TABLE staging_articles \() Tj
+0 -12 Td
+(  ID_ARTICLE VARCHAR\(10\),) Tj
+0 -12 Td
+(  NOM_ARTICLE VARCHAR\(200\),) Tj
+0 -12 Td
+(  CATEGORIE VARCHAR\(100\),) Tj
+0 -12 Td
+(  PRIX_CATALOGUE VARCHAR\(20\),) Tj
+0 -12 Td
+(  STOCK VARCHAR\(20\),) Tj
+0 -12 Td
+(  FOURNISSEUR VARCHAR\(100\),) Tj
+0 -12 Td
+(  DATE_AJOUT VARCHAR\(20\),) Tj
+0 -12 Td
+(  ACTIF VARCHAR\(10\),) Tj
+0 -12 Td
+(  TAUX_TVA VARCHAR\(10\)) Tj
+0 -12 Td
+(\);) Tj
+0 -12 Td
+(- **Fonction** : importer les articles bruts.) Tj
+0 -12 Td
+(- **Raison** : conserver la trace des anomalies avant correction.) Tj
+0 -12 Td
+(- **Résultat attendu** : table staging complète.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(### 2\) Import des CSV) Tj
+0 -12 Td
+(LOAD DATA INFILE '/path/source_ventes.csv') Tj
+0 -12 Td
+(INTO TABLE staging_ventes) Tj
+0 -12 Td
+(FIELDS TERMINATED BY ';') Tj
+0 -12 Td
+(IGNORE 1 LINES;) Tj
+0 -12 Td
+(- **Fonction** : charger les données des ventes.) Tj
+0 -12 Td
+(- **Raison** : ingestion rapide et traçable.) Tj
+0 -12 Td
+(- **Résultat attendu** : lignes importées en staging.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(*\(Répéter pour les autres fichiers en adaptant la table cible.\)*) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(### 3\) Nettoyage des dates et des valeurs invalides) Tj
+0 -12 Td
+(UPDATE staging_ventes) Tj
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> >> >> /Contents 8 0 R >>
+endobj
+8 0 obj
+<< /Length 2663 >>
+stream
+BT
+/F1 10 Tf
+54 720 Td
+(SET DATE_VENTE = NULL) Tj
+0 -12 Td
+(WHERE DATE_VENTE IS NULL) Tj
+0 -12 Td
+(   OR DATE_VENTE = '') Tj
+0 -12 Td
+(   OR DATE_VENTE NOT REGEXP '^[0-9]{4}-[0-9]{2}-[0-9]{2}$';) Tj
+0 -12 Td
+(- **Fonction** : repérer les dates invalides.) Tj
+0 -12 Td
+(- **Raison** : éviter les conversions en erreur.) Tj
+0 -12 Td
+(- **Résultat attendu** : dates invalides remplacées par NULL.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(UPDATE staging_ventes) Tj
+0 -12 Td
+(SET PRIX_UNITAIRE = NULL) Tj
+0 -12 Td
+(WHERE PRIX_UNITAIRE IN \('NaN', 'None', ''\)) Tj
+0 -12 Td
+(   OR CAST\(PRIX_UNITAIRE AS DECIMAL\(10,2\)\) <= 0;) Tj
+0 -12 Td
+(- **Fonction** : neutraliser les prix invalides ou négatifs.) Tj
+0 -12 Td
+(- **Raison** : préserver la cohérence financière.) Tj
+0 -12 Td
+(- **Résultat attendu** : prix invalides mis à NULL.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(### 4\) Uniformisation des textes) Tj
+0 -12 Td
+(UPDATE staging_ventes) Tj
+0 -12 Td
+(SET CLIENT = UPPER\(CLIENT\),) Tj
+0 -12 Td
+(    VILLE = UPPER\(VILLE\);) Tj
+0 -12 Td
+(- **Fonction** : homogénéiser les libellés.) Tj
+0 -12 Td
+(- **Raison** : éviter des doublons logiques lors des regroupements.) Tj
+0 -12 Td
+(- **Résultat attendu** : valeurs en majuscules.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(### 5\) Fusion produits + articles \(dimension\)) Tj
+0 -12 Td
+(CREATE TABLE dim_produits AS) Tj
+0 -12 Td
+(SELECT) Tj
+0 -12 Td
+(  p.ID_PRODUIT,) Tj
+0 -12 Td
+(  COALESCE\(p.NOM_PRODUIT, a.NOM_ARTICLE\) AS NOM_PRODUIT,) Tj
+0 -12 Td
+(  COALESCE\(p.CATEGORIE, a.CATEGORIE\) AS CATEGORIE,) Tj
+0 -12 Td
+(  CAST\(NULLIF\(p.PRIX_CATALOGUE, 'NaN'\) AS DECIMAL\(10,2\)\) AS PRIX_CATALOGUE,) Tj
+0 -12 Td
+(  CAST\(NULLIF\(p.STOCK, 'NaN'\) AS SIGNED\) AS STOCK,) Tj
+0 -12 Td
+(  a.FOURNISSEUR,) Tj
+0 -12 Td
+(  a.DATE_AJOUT,) Tj
+0 -12 Td
+(  a.ACTIF,) Tj
+0 -12 Td
+(  a.TAUX_TVA) Tj
+0 -12 Td
+(FROM staging_produits p) Tj
+0 -12 Td
+(LEFT JOIN staging_articles a) Tj
+0 -12 Td
+(  ON p.ID_PRODUIT = a.ID_ARTICLE;) Tj
+0 -12 Td
+(- **Fonction** : créer une dimension produit fusionnée.) Tj
+0 -12 Td
+(- **Raison** : obtenir une vue unique des références produits/articles.) Tj
+0 -12 Td
+(- **Résultat attendu** : table `dim_produits` prête pour l’analyse.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(### 6\) Fusion des ventes avec la dimension) Tj
+0 -12 Td
+(CREATE TABLE ventes_analyse AS) Tj
+0 -12 Td
+(SELECT) Tj
+0 -12 Td
+(  v.ID_VENTE,) Tj
+0 -12 Td
+(  v.DATE_VENTE,) Tj
+0 -12 Td
+(  v.ID_PRODUIT,) Tj
+0 -12 Td
+(  v.CLIENT,) Tj
+0 -12 Td
+(  v.QUANTITE,) Tj
+0 -12 Td
+(  CAST\(v.PRIX_UNITAIRE AS DECIMAL\(10,2\)\) AS PRIX_UNITAIRE,) Tj
+0 -12 Td
+(  v.VILLE,) Tj
+0 -12 Td
+(  \(v.QUANTITE * CAST\(v.PRIX_UNITAIRE AS DECIMAL\(10,2\)\)\) AS TOTAL_VENTE,) Tj
+ET
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> >> >> /Contents 10 0 R >>
+endobj
+10 0 obj
+<< /Length 2366 >>
+stream
+BT
+/F1 10 Tf
+54 720 Td
+(  d.NOM_PRODUIT,) Tj
+0 -12 Td
+(  d.CATEGORIE) Tj
+0 -12 Td
+(FROM staging_ventes v) Tj
+0 -12 Td
+(LEFT JOIN dim_produits d) Tj
+0 -12 Td
+(  ON v.ID_PRODUIT = d.ID_PRODUIT;) Tj
+0 -12 Td
+(- **Fonction** : créer une table de faits enrichie.) Tj
+0 -12 Td
+(- **Raison** : analyser les ventes par produit/catégorie.) Tj
+0 -12 Td
+(- **Résultat attendu** : table `ventes_analyse` avec `TOTAL_VENTE`.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(### 7\) Journalisation ETL) Tj
+0 -12 Td
+(CREATE TABLE log_etl \() Tj
+0 -12 Td
+(  ID_LOG INT AUTO_INCREMENT PRIMARY KEY,) Tj
+0 -12 Td
+(  ETAPE VARCHAR\(100\),) Tj
+0 -12 Td
+(  NB_LIGNES INT,) Tj
+0 -12 Td
+(  DATE_EXECUTION DATETIME DEFAULT CURRENT_TIMESTAMP) Tj
+0 -12 Td
+(\);) Tj
+0 -12 Td
+(- **Fonction** : traçabilité des traitements.) Tj
+0 -12 Td
+(- **Raison** : contrôle de qualité et audit.) Tj
+0 -12 Td
+(- **Résultat attendu** : table de logs centralisée.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(INSERT INTO log_etl \(ETAPE, NB_LIGNES\)) Tj
+0 -12 Td
+(VALUES \('Chargement staging_ventes', \(SELECT COUNT\(*\) FROM staging_ventes\)\);) Tj
+0 -12 Td
+(- **Fonction** : tracer le nombre de lignes chargées.) Tj
+0 -12 Td
+(- **Raison** : vérifier l’extraction.) Tj
+0 -12 Td
+(- **Résultat attendu** : log enregistré.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(### 8\) Indexation) Tj
+0 -12 Td
+(CREATE INDEX idx_ventes_date ON ventes_analyse \(DATE_VENTE\);) Tj
+0 -12 Td
+(CREATE INDEX idx_ventes_produit ON ventes_analyse \(ID_PRODUIT\);) Tj
+0 -12 Td
+(CREATE INDEX idx_ventes_ville ON ventes_analyse \(VILLE\);) Tj
+0 -12 Td
+(- **Fonction** : accélérer les requêtes analytiques.) Tj
+0 -12 Td
+(- **Raison** : optimiser les filtres fréquents.) Tj
+0 -12 Td
+(- **Résultat attendu** : index disponibles.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Captures d’écran \(à insérer\)) Tj
+0 -12 Td
+(1. **Import CSV dans la table staging** : capture montrant l’exécution de `LOAD DATA INFILE`.) Tj
+0 -12 Td
+(2. **Exemple de nettoyage** : capture d’une requête `SELECT` après nettoyage des dates/prix.) Tj
+0 -12 Td
+(3. **Table dim_produits** : capture du résultat de la fusion produits/articles.) Tj
+0 -12 Td
+(4. **Table ventes_analyse** : capture avec le champ `TOTAL_VENTE`.) Tj
+0 -12 Td
+(5. **Table log_etl** : capture montrant l’insertion de logs.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(Chaque capture devra être commentée dans le document final.) Tj
+ET
+endstream
+endobj
+xref
+0 11
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000133 00000 n 
+0000000308 00000 n 
+0000003658 00000 n 
+0000003833 00000 n 
+0000006316 00000 n 
+0000006491 00000 n 
+0000009206 00000 n 
+0000009382 00000 n 
+trailer
+<< /Size 11 /Root 1 0 R >>
+startxref
+11801
+%%EOF
